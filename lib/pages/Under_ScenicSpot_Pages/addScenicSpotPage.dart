@@ -35,7 +35,7 @@ class addScenicSpotPage extends StatefulWidget {
 
 class _addScenicSpotPageState extends State<addScenicSpotPage> {
   List<Asset> images = <Asset>[];
-  List<String> imagePath = [];
+  String imageURL = "";
   Map spot = {'title': '名称', 'address': '地址', 'position': ''};
   TextEditingController titleController = TextEditingController();
   TextEditingController subTitleController = TextEditingController();
@@ -83,7 +83,7 @@ class _addScenicSpotPageState extends State<addScenicSpotPage> {
       List<String> fileIds = [fileID];
       CloudBaseStorageRes<List<DownloadMetadata>> res =
           await cbstorage.getFileDownloadURL(fileIds);
-
+      imageURL += res.data[0].downloadUrl + "###";
       //storage to database
       collection
           .add({
@@ -111,6 +111,17 @@ class _addScenicSpotPageState extends State<addScenicSpotPage> {
         eachPhotoUp(element, storage, collection);
       });
     }
+    Collection scenicSpot = db.collection('scenicSpot');
+    scenicSpot
+          .add({
+            'creator': '18670343782',
+            'scenicSpotPhotoUrl': imageURL,
+            
+          })
+          .then((res) {})
+          .catchError((e) {
+            print(e);
+          });
   }
 
   //显示选择后的图像
